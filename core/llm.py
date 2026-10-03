@@ -7,6 +7,7 @@ import time
 from pathlib import Path
 from typing import Callable, TypeVar
 
+import httpx
 from google import genai
 from google.genai import errors, types
 from pydantic import BaseModel, ValidationError
@@ -82,6 +83,12 @@ class LLM:
                     raise
                 wait = _suggested_delay(error) or min(60, 5 * 2 ** (attempt - 1))
                 self._log("Gemini", f"error {error.code}, waiting {wait}s before retry {attempt + 1}/{MAX_TRIES}")
+                time.sleep(wait)
+            except httpx.TransportError as error:  # dropped connections under load
+                if attempt == MAX_TRIES:
+                    raise
+                wait = min(60, 5 * 2 ** (attempt - 1))
+                self._log("Gemini", f"connection error ({error}), waiting {wait}s before retry {attempt + 1}/{MAX_TRIES}")
                 time.sleep(wait)
         raise AssertionError("unreachable")
 
