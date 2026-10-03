@@ -1,0 +1,7 @@
+google-genai>=1.0
+tavily-python>=0.5
+pydantic>=2.9
+python-dotenv>=1.0
+PyYAML>=6.0
+requests>=2.32
+pytest>=8.0

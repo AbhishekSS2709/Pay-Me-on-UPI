@@ -1,0 +1,41 @@
+title: "Pay Me on UPI: How Digital Payments Changed Small Business in India"
+audience: "First-time small-business owners in India"
+chapters: 3
+min_words: 600
+max_words: 900
+
+tone: >
+  Friendly, clear and encouraging, as if a mentor is explaining things to a new
+  shop owner. Plain English with no jargon; explain any technical term the first
+  time it appears. The same tone and voice across all three chapters.
+
+style: >
+  Correct grammar, spelling and punctuation throughout, using British English
+  spelling as used in India. Flowing prose with no bullet points inside the
+  chapters. Each chapter ends with one line starting with "Takeaway:".
+
+# Searched first. Name shown in the reference list for each domain.
+official_domains:
+  npci.org.in: "National Payments Corporation of India (NPCI)"
+  rbi.org.in: "Reserve Bank of India (RBI)"
+  pib.gov.in: "Press Information Bureau, Government of India"
+  meity.gov.in: "Ministry of Electronics and Information Technology"
+  financialservices.gov.in: "Department of Financial Services, Ministry of Finance"
+  finmin.gov.in: "Ministry of Finance, Government of India"
+  msme.gov.in: "Ministry of Micro, Small and Medium Enterprises"
+  digitalindia.gov.in: "Digital India, Government of India"
+  cybercrime.gov.in: "National Cyber Crime Reporting Portal"
+  india.gov.in: "National Portal of India"
+
+# Searched only when a chapter has too few official pages.
+news_domains:
+  thehindu.com: "The Hindu"
+  indianexpress.com: "The Indian Express"
+  hindustantimes.com: "Hindustan Times"
+  livemint.com: "Mint"
+  economictimes.indiatimes.com: "The Economic Times"
+  business-standard.com: "Business Standard"
+  thehindubusinessline.com: "The Hindu BusinessLine"
+  reuters.com: "Reuters"
+  bbc.com: "BBC News"
+  moneycontrol.com: "Moneycontrol"
