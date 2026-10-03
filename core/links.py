@@ -1,4 +1,6 @@
 """Checks that links load, the way a reader's browser would."""
+import html
+import re
 from concurrent.futures import ThreadPoolExecutor
 from typing import Literal
 
@@ -40,6 +42,21 @@ def check_urls(urls: list[str]) -> dict[str, tuple[LinkStatus, str]]:
     unique = list(dict.fromkeys(urls))
     with ThreadPoolExecutor(max_workers=8) as pool:
         return dict(zip(unique, pool.map(check_url, unique)))
+
+
+def page_headline(url: str) -> str | None:
+    """The page's og:title, which on sites like PIB is the real headline rather than a generic <title>."""
+    try:
+        response = requests.get(url, headers=BROWSER_HEADERS, timeout=20)
+    except requests.exceptions.SSLError:
+        try:  # same incomplete-certificate fallback as check_url
+            response = requests.get(url, headers=BROWSER_HEADERS, timeout=20, verify=False)
+        except requests.RequestException:
+            return None
+    except requests.RequestException:
+        return None
+    match = re.search(r'og:title"\s+content="([^"]+)"', response.text)
+    return " ".join(html.unescape(match.group(1)).split()) if match else None
 
 
 def _get(url: str, verify: bool) -> requests.Response:

@@ -43,7 +43,7 @@ def reference_line(number: int, page: Page) -> str:
 def render_book(state: BookState) -> str:
     facts = {f.id: f for f in state.facts}
     pages = {p.id: p for p in state.pages}
-    lines = [f"# {state.brief.title}", "", f"*A friendly guide for {state.brief.audience.lower()}*", ""]
+    lines = [f"# {state.brief.title}", "", f"*A friendly guide for {state.brief.audience[0].lower() + state.brief.audience[1:]}*", ""]
     for chapter in state.chapters:
         body, references = number_citations(chapter.body, facts, pages)
         lines += [f"## Chapter {chapter.number}: {chapter.title}", "", body, "", chapter.takeaway.strip(), "",

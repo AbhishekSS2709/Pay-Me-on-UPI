@@ -12,6 +12,7 @@ import config
 from agents import editor, fact_checker, planner, researcher, writer
 from agents.researcher import FoundFact
 from core import checks
+from core.links import page_headline
 from core.llm import LLM
 from core.search import WebSearch
 from core.state import BookState, Chapter, Draft, Fact, Issue, Page
@@ -243,6 +244,10 @@ class Orchestrator:
     def _publish(self) -> None:
         s = self.state
         s.llm_calls = self.llm.calls
+        for page in {s.page(f.page_id).url: s.page(f.page_id) for f in s.facts}.values():
+            headline = page_headline(page.url)
+            if headline and headline != page.title:
+                page.title = headline
         self.output_dir.mkdir(parents=True, exist_ok=True)
         (self.output_dir / "book.md").write_text(assemble.render_book(s), encoding="utf-8")
         (self.output_dir / "evidence.md").write_text(assemble.render_evidence(s), encoding="utf-8")
