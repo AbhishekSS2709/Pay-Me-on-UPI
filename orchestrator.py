@@ -240,6 +240,31 @@ class Orchestrator:
                 s.warnings.append(f"Chapter {chapter.number}: {issue.problem}")
             s.note("Orchestrator", f"chapter {chapter.number} finished with {len(leftovers)} warning(s); see run_log.md")
 
+    # Optional, run by hand: one more pass for a chapter that finished with warnings
+    def extra_revision(self, number: int) -> None:
+        s = self.state
+        chapter = next(c for c in s.chapters if c.number == number)
+        issues = [i for i in s.open_issues if i.chapter == number and i.blocking]
+        if not issues:
+            s.note("Orchestrator", f"chapter {number} has no open issues; nothing to revise")
+            return
+        s.note("Orchestrator → Writer", f"extra revision: chapter {number}, {len(issues)} leftover issues")
+        draft = writer.revise(self.llm, s.brief, s.outline, s.facts, [chapter], issues, final_round=True)
+        revised = self._to_chapters(draft, expected={number})[0]
+        s.chapters = [revised if c.number == number else c for c in s.chapters]
+        self._save()
+
+        new_issues = self._review([revised])
+        s.open_issues = [i for i in s.open_issues if i.chapter != number] + new_issues
+        s.warnings = [w for w in s.warnings if not w.startswith(f"Chapter {number}:")]
+        if any(i.blocking for i in new_issues):
+            self._final_safety_net([revised], new_issues)
+        else:
+            revised.approved = True
+            s.note("Orchestrator", f"chapter {number} approved")
+        self._publish()
+        self._save()
+
     # Step 7: assemble the outputs (code)
     def _publish(self) -> None:
         s = self.state

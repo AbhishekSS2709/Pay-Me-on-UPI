@@ -68,6 +68,8 @@ A run uses about 20–40 Tavily credits. Batching is what keeps the numbers low:
 
 Model choice: `gemini-3.8-flash` for planning, writing and judging, and `gemini-3.5-flash-lite` for bulk fact extraction. Both can be changed in `.env`.
 
+The book in `output/` was planned by `gemini-3.8-flash`, but the newer Flash models kept returning 503 "high demand" on the Writer step, so that run was resumed with `SMART_MODEL=gemini-3.5-flash`. `--resume` let it pick up from the saved state without repeating any searches or finished calls.
+
 ## Running it
 
 Requires Python 3.10+.
@@ -84,6 +86,7 @@ cp .env.example .env            # then add GEMINI_API_KEY and TAVILY_API_KEY
 | `python main.py` | Writes the book from `brief.yaml` |
 | `python main.py --resume` | Continues a stopped run from `output/state.json` |
 | `python main.py --check-links` | Re-tests every reference link in `output/book.md` |
+| `python main.py --revise 2` | One extra Writer pass for a chapter that finished with warnings, then a normal review |
 | `pytest` | Runs the unit tests (no API keys needed) |
 
 Get keys from https://aistudio.google.com/apikey and https://app.tavily.com.

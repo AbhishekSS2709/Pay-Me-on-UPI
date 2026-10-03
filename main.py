@@ -3,6 +3,7 @@
     python main.py                 write the book from brief.yaml
     python main.py --resume        continue a stopped run from output/state.json
     python main.py --check-links   re-test every reference link in output/book.md
+    python main.py --revise 2      one extra revision of a chapter that finished with warnings
 """
 import argparse
 import re
@@ -36,6 +37,18 @@ def write_book(resume: bool) -> int:
     return 0
 
 
+def revise_chapter(number: int) -> int:
+    state_path = config.OUTPUT_DIR / "state.json"
+    if not state_path.exists():
+        print("No output/state.json yet. Run python main.py first.")
+        return 1
+    state = BookState.load(state_path)
+    llm = LLM(config.GEMINI_API_KEY, config.CACHE_DIR, config.MAX_LLM_CALLS, state.note, calls_used=state.llm_calls)
+    search = WebSearch(config.TAVILY_API_KEY, config.CACHE_DIR, state.note)
+    Orchestrator(state, llm, search, config.OUTPUT_DIR).extra_revision(number)
+    return 0
+
+
 def check_links() -> int:
     book = config.OUTPUT_DIR / "book.md"
     if not book.exists():
@@ -56,7 +69,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Multi-agent writer for 'Pay Me on UPI'.")
     parser.add_argument("--resume", action="store_true", help="continue from output/state.json")
     parser.add_argument("--check-links", action="store_true", help="re-test links in output/book.md")
+    parser.add_argument("--revise", type=int, metavar="N", help="one extra revision of chapter N, using its open issues")
     args = parser.parse_args()
+    if args.revise:
+        return revise_chapter(args.revise)
     return check_links() if args.check_links else write_book(args.resume)
 
 
