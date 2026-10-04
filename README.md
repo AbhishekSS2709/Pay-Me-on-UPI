@@ -8,20 +8,20 @@ A small multi-agent system that researches and writes a three-chapter book, *Pay
 
 ```mermaid
 flowchart TD
-    B[brief.yaml] --> P[Planner<br/>outline, voice guide,<br/>glossary, search queries]
-    P --> S[Search, code<br/>official sites first, then news<br/>link check, drop thin pages]
-    S --> R[Researcher<br/>facts + exact quotes]
+    B["brief.yaml"] --> P["Planner<br/>outline, voice guide,<br/>glossary, search queries"]
+    P --> S["Search, code<br/>official sites first, then news<br/>link check, drop thin pages"]
+    S --> R["Researcher<br/>facts + exact quotes"]
     R -- "missing facts (once)" --> S
-    R --> V{Code: is each quote<br/>really on its page?}
-    V -- verified fact pool --> W[Writer<br/>all 3 chapters in one call<br/>cites fact IDs like F3]
-    W --> C[Code checks<br/>600-900 words, no bullets,<br/>Takeaway line, figures cited]
-    C --> E[Editor<br/>grammar, tone, voice]
-    C --> F[Fact-checker<br/>does the quote support<br/>the sentence?]
-    E --> D{Blocking issues?}
+    R --> V{"Code: is each quote<br/>really on its page?"}
+    V -- "verified fact pool" --> W["Writer<br/>all 3 chapters in one call<br/>cites fact IDs like F3"]
+    W --> C["Code checks<br/>600-900 words, no bullets,<br/>Takeaway line, figures cited"]
+    C --> E["Editor<br/>grammar, tone, voice"]
+    C --> F["Fact-checker<br/>does the quote support<br/>the sentence?"]
+    E --> D{"Blocking issues?"}
     F --> D
-    D -- "yes, round ≤ 2:<br/>only flagged chapters" --> W
-    D -- "no, or out of rounds<br/>(unsupported sentences deleted)" --> A[Assembler, code<br/>F# → 1, 2, 3 + reference lists]
-    A --> O[book.md · evidence.md · run_log.md]
+    D -- "yes, up to 2 rounds:<br/>only flagged chapters" --> W
+    D -- "no, or out of rounds<br/>(unsupported sentences deleted)" --> A["Assembler, code<br/>fact IDs become 1, 2, 3<br/>plus reference lists"]
+    A --> O["book.md, evidence.md, run_log.md"]
 ```
 
 ### The agents
